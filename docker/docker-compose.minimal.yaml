@@ -1,0 +1,272 @@
+# Previous content preserved, only updating ssrf_proxy service
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=dify
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=difyai123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - dify-network
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - ./volumes/redis:/data
+    ports:
+      - "6381:6379"
+    networks:
+      - dify-network
+
+  weaviate:
+    image: semitechnologies/weaviate:1.21.2
+    volumes:
+      - ./volumes/weaviate:/var/lib/weaviate
+    ports:
+      - "8082:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: text2vec-openai
+      ENABLE_MODULES: text2vec-openai
+      CLUSTER_HOSTNAME: 'node1'
+    networks:
+      - dify-network
+
+  plugin_daemon:
+    container_name: docker-plugin_daemon-1
+    build:
+      context: /usr/local/src/dify-plugin-daemon
+      dockerfile: docker/local.dockerfile
+    environment:
+      - SERVER_PORT=5002
+      - SERVER_KEY=lYkiYYT6owG+71oLerGzA7GXCgOT++6ovaezWAjpCjf+Sjc3ZtU+qUEi
+      - GIN_MODE=release
+      - PLATFORM=local
+      - DIFY_INNER_API_KEY=QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1
+      - DIFY_INNER_API_URL=http://api:5001
+      - PLUGIN_STORAGE_TYPE=local
+      - PLUGIN_STORAGE_LOCAL_ROOT=/app/storage
+      - PLUGIN_INSTALLED_PATH=/app/plugin
+      - PLUGIN_WORKING_PATH=/app/cwd
+      - PERSISTENCE_STORAGE_PATH=/app/persistence
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=difyai123456
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=difyai123456
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=dify_plugin
+      - FORCE_VERIFYING_SIGNATURE=false
+      - PLUGIN_REMOTE_INSTALLING_ENABLED=true
+      - PLUGIN_REMOTE_INSTALLING_HOST=0.0.0.0
+      - PLUGIN_REMOTE_INSTALLING_PORT=5003
+    volumes:
+      - /usr/local/src/dify-plugin-daemon/storage:/app/storage
+      - /usr/local/src/dify-plugin-daemon/persistence:/app/persistence
+      - /usr/local/src/dify-plugin-daemon/cwd:/app/cwd
+      - /usr/local/src/dify-plugin-daemon/plugin:/app/plugin
+      - /usr/local/src/dify-plugin-daemon/.tiktoken:/app/.tiktoken
+    ports:
+      - "5002:5002"
+      - "5003:5003"
+    networks:
+      - dify-network
+    depends_on:
+      - redis
+      - db
+
+  sandbox:
+    container_name: docker-sandbox-1
+    build:
+      context: /usr/local/src/dify-sandbox
+      dockerfile: docker/amd64/dockerfile
+      args:
+        GIN_MODE: release
+    environment:
+      - API_KEY=dify-sandbox
+      - GIN_MODE=release
+      - WORKER_TIMEOUT=15
+      - ENABLE_NETWORK=true
+      - ENABLE_UNSAFE=true
+      - ENABLE_CODE=true
+      - HTTP_PROXY=http://ssrf_proxy:3128
+      - HTTPS_PROXY=http://ssrf_proxy:3128
+      - SANDBOX_PORT=8194
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - /usr/local/src/dify-sandbox/build/env:/env
+      - /usr/local/src/dify-sandbox/build/main:/main
+      - /usr/local/src/dify-sandbox/dependencies:/dependencies
+      - /usr/local/src/dify-sandbox/conf:/conf
+    ports:
+      - "8194:8194"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - ssrf_proxy_network
+    depends_on:
+      - ssrf_proxy
+
+  api:
+    image: dify-api:latest
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    environment:
+      # Storage configuration
+      - STORAGE_TYPE=local
+      - STORAGE_LOCAL_PATH=/app/api/storage
+      - DATA_DIR=/app/api/storage
+      - FILE_UPLOAD_PATH=/app/api/storage/uploads
+      - MEDIA_LOCAL_FILE_PATH=/app/api/storage/media
+      # Database configuration
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=difyai123456
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=dify
+      # Redis configuration
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      # Vector store configuration
+      - VECTOR_STORE=weaviate
+      - WEAVIATE_ENDPOINT=http://weaviate:8080
+      # URL configuration
+      - CONSOLE_API_URL=https://dify.skytok.net
+      - CONSOLE_WEB_URL=https://dify.skytok.net
+      # Plugin daemon configuration
+      - PLUGIN_DAEMON_URL=http://docker-plugin_daemon-1:5002
+      - PLUGIN_DAEMON_KEY=lYkiYYT6owG+71oLerGzA7GXCgOT++6ovaezWAjpCjf+Sjc3ZtU+qUEi
+      # Sandbox configuration
+      - SANDBOX_URL=http://docker-sandbox-1:8194
+      - SANDBOX_KEY=dify-sandbox
+    volumes:
+      - dify_storage:/app/api/storage
+    ports:
+      - "5001:5001"
+    networks:
+      - dify-network
+      - ssrf_proxy_network
+    depends_on:
+      - db
+      - redis
+      - weaviate
+      - plugin_daemon
+      - sandbox
+
+  web:
+    image: dify-web:latest
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+    environment:
+      - CONSOLE_API_URL=https://dify.skytok.net
+      - CONSOLE_WEB_URL=https://dify.skytok.net
+      - SERVICE_API_URL=https://dify.skytok.net
+      - APP_API_URL=https://dify.skytok.net
+      - APP_WEB_URL=https://dify.skytok.net
+    ports:
+      - "3001:3000"
+    networks:
+      - dify-network
+    depends_on:
+      - api
+
+  worker:
+    image: dify-api:latest
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    command: celery -A app.celery worker -P gevent -c 1 --loglevel INFO
+    environment:
+      # Storage configuration
+      - STORAGE_TYPE=local
+      - STORAGE_LOCAL_PATH=/app/api/storage
+      - DATA_DIR=/app/api/storage
+      - FILE_UPLOAD_PATH=/app/api/storage/uploads
+      - MEDIA_LOCAL_FILE_PATH=/app/api/storage/media
+      # Database configuration
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=difyai123456
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=dify
+      # Redis configuration
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      # Vector store configuration
+      - VECTOR_STORE=weaviate
+      - WEAVIATE_ENDPOINT=http://weaviate:8080
+      # URL configuration
+      - CONSOLE_API_URL=https://dify.skytok.net
+      - CONSOLE_WEB_URL=https://dify.skytok.net
+      - SERVICE_API_URL=https://dify.skytok.net
+      - APP_API_URL=https://dify.skytok.net
+      - APP_WEB_URL=https://dify.skytok.net
+      # Plugin daemon configuration
+      - PLUGIN_DAEMON_URL=http://docker-plugin_daemon-1:5002
+      - PLUGIN_DAEMON_KEY=lYkiYYT6owG+71oLerGzA7GXCgOT++6ovaezWAjpCjf+Sjc3ZtU+qUEi
+      # Sandbox configuration
+      - SANDBOX_URL=http://docker-sandbox-1:8194
+      - SANDBOX_KEY=dify-sandbox
+    volumes:
+      - dify_storage:/app/api/storage
+    networks:
+      - dify-network
+      - ssrf_proxy_network
+    depends_on:
+      - db
+      - redis
+      - weaviate
+      - plugin_daemon
+      - sandbox
+
+  ssrf_proxy:
+    image: ubuntu/squid:latest
+    restart: always
+    command: >
+      bash -c "apt-get update && 
+             apt-get install -y gettext-base &&
+             cp /docker-entrypoint-mount.sh /docker-entrypoint.sh &&
+             sed -i 's/\r$$//' /docker-entrypoint.sh &&
+             chmod +x /docker-entrypoint.sh &&
+             /docker-entrypoint.sh"
+    volumes:
+      - ./ssrf_proxy/squid.conf.template:/etc/squid/squid.conf.template
+      - ./ssrf_proxy/docker-entrypoint.sh:/docker-entrypoint-mount.sh
+    environment:
+      HTTP_PORT: ${SSRF_HTTP_PORT:-3128}
+      COREDUMP_DIR: ${SSRF_COREDUMP_DIR:-/var/spool/squid}
+      REVERSE_PROXY_PORT: ${SSRF_REVERSE_PROXY_PORT:-8194}
+      SANDBOX_HOST: ${SSRF_SANDBOX_HOST:-sandbox}
+      SANDBOX_PORT: ${SANDBOX_PORT:-8194}
+    networks:
+      - ssrf_proxy_network
+      - default
+
+volumes:
+  postgres_data:
+    driver: local
+  dify_storage:
+    driver: local
+
+networks:
+  dify-network:
+    driver: bridge
+  ssrf_proxy_network:
+    driver: bridge
+    internal: true

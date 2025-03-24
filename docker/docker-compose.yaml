@@ -5,11 +5,11 @@
 # ==================================================================
 
 x-shared-env: &shared-api-worker-env
-  CONSOLE_API_URL: ${CONSOLE_API_URL:-}
-  CONSOLE_WEB_URL: ${CONSOLE_WEB_URL:-}
-  SERVICE_API_URL: ${SERVICE_API_URL:-}
-  APP_API_URL: ${APP_API_URL:-}
-  APP_WEB_URL: ${APP_WEB_URL:-}
+  CONSOLE_API_URL: ${CONSOLE_API_URL:-https://dify-api.skytok.net}
+  CONSOLE_WEB_URL: ${CONSOLE_WEB_URL:-https://dify.skytok.net}
+  SERVICE_API_URL: ${SERVICE_API_URL:-https://dify-api.skytok.net}
+  APP_API_URL: ${APP_API_URL:-https://dify-api.skytok.net}
+  APP_WEB_URL: ${APP_WEB_URL:-https://dify.skytok.net}
   FILES_URL: ${FILES_URL:-}
   LOG_LEVEL: ${LOG_LEVEL:-INFO}
   LOG_FILE: ${LOG_FILE:-/app/logs/server.log}
@@ -123,7 +123,7 @@ x-shared-env: &shared-api-worker-env
   BAIDU_OBS_SECRET_KEY: ${BAIDU_OBS_SECRET_KEY:-your-secret-key}
   BAIDU_OBS_ACCESS_KEY: ${BAIDU_OBS_ACCESS_KEY:-your-access-key}
   BAIDU_OBS_ENDPOINT: ${BAIDU_OBS_ENDPOINT:-your-server-url}
-  SUPABASE_BUCKET_NAME: ${SUPABASE_BUCKET_NAME:-your-bucket-name}
+  SUPABASE_BUCKET_NAME: ${SUPABASE_BUCKET_NAME:-dify}
   SUPABASE_API_KEY: ${SUPABASE_API_KEY:-your-access-key}
   SUPABASE_URL: ${SUPABASE_URL:-your-server-url}
   VECTOR_STORE: ${VECTOR_STORE:-weaviate}
@@ -265,8 +265,8 @@ x-shared-env: &shared-api-worker-env
   UPLOAD_FILE_SIZE_LIMIT: ${UPLOAD_FILE_SIZE_LIMIT:-15}
   UPLOAD_FILE_BATCH_LIMIT: ${UPLOAD_FILE_BATCH_LIMIT:-5}
   ETL_TYPE: ${ETL_TYPE:-dify}
-  UNSTRUCTURED_API_URL: ${UNSTRUCTURED_API_URL:-}
-  UNSTRUCTURED_API_KEY: ${UNSTRUCTURED_API_KEY:-}
+  UNSTRUCTURED_API_URL: ${UNSTRUCTURED_API_URL:-http://unstructured:8000/general/v0/general}
+  UNSTRUCTURED_API_KEY: ${UNSTRUCTURED_API_KEY:-unstructured}
   SCARF_NO_ANALYTICS: ${SCARF_NO_ANALYTICS:-true}
   PROMPT_GENERATION_MAX_TOKENS: ${PROMPT_GENERATION_MAX_TOKENS:-512}
   CODE_GENERATION_MAX_TOKENS: ${CODE_GENERATION_MAX_TOKENS:-1024}
@@ -286,7 +286,7 @@ x-shared-env: &shared-api-worker-env
   MAIL_TYPE: ${MAIL_TYPE:-resend}
   MAIL_DEFAULT_SEND_FROM: ${MAIL_DEFAULT_SEND_FROM:-}
   RESEND_API_URL: ${RESEND_API_URL:-https://api.resend.com}
-  RESEND_API_KEY: ${RESEND_API_KEY:-your-resend-api-key}
+  RESEND_API_KEY: ${RESEND_API_KEY:-re_D5k9Ls3d_8SB28iNsnNnrFq1SoUp2swX3}
   SMTP_SERVER: ${SMTP_SERVER:-}
   SMTP_PORT: ${SMTP_PORT:-465}
   SMTP_USERNAME: ${SMTP_USERNAME:-}
