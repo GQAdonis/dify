@@ -49,7 +49,13 @@ function getAction(action: 'get' | 'post' | 'del' | 'patch', isInstalledApp: boo
 }
 
 export function getUrl(url: string, isInstalledApp: boolean, installedAppId: string) {
-  return isInstalledApp ? `installed-apps/${installedAppId}/${url.startsWith('/') ? url.slice(1) : url}` : url
+  if (isInstalledApp) {
+    return `installed-apps/${installedAppId}/${url.startsWith('/') ? url.slice(1) : url}`
+  }
+  
+  // For non-installed apps, ensure URL is properly formatted with a leading slash
+  // This ensures it's treated as relative to the current domain
+  return url.startsWith('/') ? url : `/${url}`
 }
 
 export const sendChatMessage = async (body: Record<string, any>, { onData, onCompleted, onThought, onFile, onError, getAbortController, onMessageEnd, onMessageReplace, onTTSChunk, onTTSEnd }: {
