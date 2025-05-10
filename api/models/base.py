@@ -1,5 +1,4 @@
-from sqlalchemy.orm import declarative_base
+from models.engine import db
 
-from models.engine import metadata
-
-Base = declarative_base(metadata=metadata)
+# Use Flask-SQLAlchemy's Model as the base class
+Base = db.Model
