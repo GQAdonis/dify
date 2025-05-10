@@ -1,0 +1,190 @@
+x-shared-env: &shared-api-worker-env
+  CONSOLE_API_URL: ${CONSOLE_API_URL:-https://dify.prometheusags.ai/api}
+  CONSOLE_WEB_URL: ${CONSOLE_WEB_URL:-https://dify.prometheusags.ai}
+  SERVICE_API_URL: ${SERVICE_API_URL:-https://dify.prometheusags.ai/api}
+  APP_API_URL: ${APP_API_URL:-https://dify.prometheusags.ai/api}
+  APP_WEB_URL: ${APP_WEB_URL:-https://dify.prometheusags.ai}
+  FILES_URL: ${FILES_URL:-https://dify.prometheusags.ai}
+  OPENDAL_FS_ROOT: ${OPENDAL_FS_ROOT:-storage}
+  OPENDAL_SCHEME: ${OPENDAL_SCHEME:-fs}
+
+services:
+  api:
+    image: langgenius/dify-api:1.3.1
+    restart: always
+    environment:
+      <<: *shared-api-worker-env
+      MODE: api
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./volumes/app/storage:/app/api/storage
+    networks:
+      - traefik_network
+      - ssrf_proxy_network
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dify-api.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/api`)"
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+      - "traefik.http.routers.dify-api.middlewares=strip-api-prefix"
+      - "traefik.http.routers.dify-api.entrypoints=websecure"
+      - "traefik.http.routers.dify-api.tls.certresolver=myresolver"
+      - "traefik.http.services.dify-api.loadbalancer.server.port=5001"
+      - "traefik.http.routers.dify-console.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/console/api`)"
+      - "traefik.http.middlewares.strip-console-api-prefix.stripprefix.prefixes=/console/api"
+      - "traefik.http.routers.dify-console.middlewares=strip-console-api-prefix"
+      - "traefik.http.routers.dify-console.entrypoints=websecure"
+      - "traefik.http.routers.dify-console.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-console.service=dify-api"
+      - "traefik.http.routers.dify-v1.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/v1`)"
+      - "traefik.http.routers.dify-v1.entrypoints=websecure"
+      - "traefik.http.routers.dify-v1.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-v1.service=dify-api"
+      - "traefik.http.routers.dify-files.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/files`)"
+      - "traefik.http.routers.dify-files.entrypoints=websecure"
+      - "traefik.http.routers.dify-files.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-files.service=dify-api"
+
+  web:
+    image: langgenius/dify-web:1.3.1
+    restart: always
+    environment:
+      CONSOLE_API_URL: ${CONSOLE_API_URL:-}
+      APP_API_URL: ${APP_API_URL:-}
+    depends_on:
+      - api
+    networks:
+      - traefik_network
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dify-web.rule=Host(`dify.prometheusags.ai`)"
+      - "traefik.http.routers.dify-web.entrypoints=websecure"
+      - "traefik.http.routers.dify-web.tls.certresolver=myresolver"
+      - "traefik.http.services.dify-web.loadbalancer.server.port=3000"
+      - "traefik.http.routers.dify-explore.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/explore`)"
+      - "traefik.http.routers.dify-explore.entrypoints=websecure"
+      - "traefik.http.routers.dify-explore.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-explore.service=dify-web"
+
+  worker:
+    image: langgenius/dify-api:1.3.1
+    restart: always
+    command: celery -A app.celery worker -P gevent -c 1 --loglevel=INFO
+    environment:
+      <<: *shared-api-worker-env
+      MODE: worker
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./volumes/app/storage:/app/api/storage
+    networks:
+      - ssrf_proxy_network
+      - default
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      PGUSER: ${PGUSER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-difyai123456}
+      POSTGRES_DB: ${POSTGRES_DB:-dify}
+      PGDATA: ${PGDATA:-/var/lib/postgresql/data/pgdata}
+    command: postgres -c 'max_connections=100'
+    volumes:
+      - ./volumes/db/data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD', 'pg_isready', '-h', 'db', '-U', '${PGUSER:-postgres}', '-d', '${POSTGRES_DB:-dify}' ]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+  redis:
+    image: redis:6-alpine
+    restart: always
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
+    volumes:
+      - ./volumes/redis/data:/data
+    command: redis-server --requirepass ${REDIS_PASSWORD:-difyai123456}
+    healthcheck:
+      test: [ 'CMD', 'redis-cli', 'ping' ]
+
+  scheduler:
+    image: langgenius/dify-api:1.3.1
+    restart: always
+    command: celery -A app.celery beat --loglevel=INFO
+    environment:
+      <<: *shared-api-worker-env
+      MODE: ""
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./volumes/app/storage:/app/api/storage
+    networks:
+      - default
+
+  sandbox:
+    image: langgenius/dify-sandbox:0.2.11
+    restart: always
+    environment:
+      API_KEY: ${SANDBOX_API_KEY:-dify-sandbox}
+      GIN_MODE: ${SANDBOX_GIN_MODE:-release}
+      WORKER_TIMEOUT: ${SANDBOX_WORKER_TIMEOUT:-15}
+      ENABLE_NETWORK: ${SANDBOX_ENABLE_NETWORK:-true}
+      HTTP_PROXY: ${SANDBOX_HTTP_PROXY:-http://ssrf_proxy:3128}
+      HTTPS_PROXY: ${SANDBOX_HTTPS_PROXY:-http://ssrf_proxy:3128}
+      SANDBOX_PORT: ${SANDBOX_PORT:-8194}
+      PIP_MIRROR_URL: ${PIP_MIRROR_URL:-}
+    volumes:
+      - ./volumes/sandbox/dependencies:/dependencies
+      - ./volumes/sandbox/conf:/conf
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://localhost:8194/health' ]
+    networks:
+      - ssrf_proxy_network
+
+  ssrf_proxy:
+    image: ubuntu/squid:latest
+    restart: always
+    volumes:
+      - ./ssrf_proxy/squid.conf.template:/etc/squid/squid.conf.template
+      - ./ssrf_proxy/docker-entrypoint.sh:/docker-entrypoint-mount.sh
+    entrypoint: [ 'sh', '-c', "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
+    environment:
+      HTTP_PORT: ${SSRF_HTTP_PORT:-3128}
+      COREDUMP_DIR: ${SSRF_COREDUMP_DIR:-/var/spool/squid}
+      REVERSE_PROXY_PORT: ${SSRF_REVERSE_PROXY_PORT:-8194}
+      SANDBOX_HOST: ${SSRF_SANDBOX_HOST:-sandbox}
+      SANDBOX_PORT: ${SANDBOX_PORT:-8194}
+    networks:
+      - ssrf_proxy_network
+      - default
+
+  qdrant:
+    image: langgenius/qdrant:v1.7.3
+    profiles:
+      - qdrant
+    restart: always
+    volumes:
+      - ./volumes/qdrant:/qdrant/storage
+    environment:
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-difyai123456}
+
+networks:
+  default:
+  traefik_network:
+    external: true
+  ssrf_proxy_network:
+    driver: bridge
+    internal: true
