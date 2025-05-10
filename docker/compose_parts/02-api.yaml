@@ -1,0 +1,45 @@
+  api:
+    image: langgenius/dify-api:1.3.1
+    restart: always
+    environment:
+      <<: *shared-api-worker-env
+      MODE: api
+      # Plugin-specific configuration for API service
+      PLUGIN_REMOTE_INSTALL_HOST: ${EXPOSE_PLUGIN_DEBUGGING_HOST:-localhost}
+      PLUGIN_REMOTE_INSTALL_PORT: ${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}
+      PLUGIN_MAX_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
+      INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./volumes/app/storage:/app/api/storage
+    networks:
+      - traefik_network
+      - ssrf_proxy_network
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dify-api.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/api`)"
+      - "traefik.http.middlewares.strip-api-prefix.stripprefix.prefixes=/api"
+      - "traefik.http.routers.dify-api.middlewares=strip-api-prefix"
+      - "traefik.http.routers.dify-api.entrypoints=websecure"
+      - "traefik.http.routers.dify-api.tls.certresolver=myresolver"
+      - "traefik.http.services.dify-api.loadbalancer.server.port=5001"
+      - "traefik.http.routers.dify-console.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/console/api`)"
+      - "traefik.http.middlewares.strip-console-api-prefix.stripprefix.prefixes=/console/api"
+      - "traefik.http.routers.dify-console.middlewares=strip-console-api-prefix"
+      - "traefik.http.routers.dify-console.entrypoints=websecure"
+      - "traefik.http.routers.dify-console.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-console.service=dify-api"
+      - "traefik.http.routers.dify-v1.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/v1`)"
+      - "traefik.http.routers.dify-v1.entrypoints=websecure"
+      - "traefik.http.routers.dify-v1.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-v1.service=dify-api"
+      - "traefik.http.routers.dify-files.rule=Host(`dify.prometheusags.ai`) && PathPrefix(`/files`)"
+      - "traefik.http.routers.dify-files.entrypoints=websecure"
+      - "traefik.http.routers.dify-files.tls.certresolver=myresolver"
+      - "traefik.http.routers.dify-files.service=dify-api"
+

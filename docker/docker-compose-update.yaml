@@ -1,0 +1,19 @@
+x-shared-env: &shared-api-worker-env
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  REDIS_PASSWORD: difyai123456
+  REDIS_DB: 0
+  DB_HOST: db
+  DB_PORT: 5432
+  DB_USERNAME: postgres
+  DB_PASSWORD: difyai123456
+  DB_DATABASE: dify
+  MIGRATION_ENABLED: "true"
+  CONSOLE_API_URL: ${CONSOLE_API_URL:-https://dify.prometheusags.ai/api}
+  CONSOLE_WEB_URL: ${CONSOLE_WEB_URL:-https://dify.prometheusags.ai}
+  SERVICE_API_URL: ${SERVICE_API_URL:-https://dify.prometheusags.ai/api}
+  APP_API_URL: ${APP_API_URL:-https://dify.prometheusags.ai/api}
+  APP_WEB_URL: ${APP_WEB_URL:-https://dify.prometheusags.ai}
+  FILES_URL: ${FILES_URL:-https://dify.prometheusags.ai}
+  OPENDAL_FS_ROOT: ${OPENDAL_FS_ROOT:-storage}
+  OPENDAL_SCHEME: ${OPENDAL_SCHEME:-fs}

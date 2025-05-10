@@ -1,0 +1,7 @@
+networks:
+  default:
+  traefik_network:
+    external: true
+  ssrf_proxy_network:
+    driver: bridge
+    internal: true

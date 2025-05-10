@@ -1,0 +1,7 @@
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    restart: always
+    volumes:
+      - ./volumes/qdrant:/qdrant/storage
+    environment:
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-difyai123456}
