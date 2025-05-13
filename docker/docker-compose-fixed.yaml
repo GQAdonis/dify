@@ -38,7 +38,7 @@ x-shared-env: &shared-api-worker-env
 
 services:
   api:
-    image: tribehealth/dify-api:05102025.2
+    image: tribehealth/dify-api:05132025
     restart: always
     environment:
       <<: *shared-api-worker-env
@@ -84,7 +84,7 @@ services:
       - "traefik.http.routers.dify-files.service=dify-api"
 
   worker:
-    image: tribehealth/dify-api:05102025.2
+    image: tribehealth/dify-api:05132025
     restart: always
     command: celery -A app.celery worker -P gevent -c 1 --loglevel=INFO
     networks:
@@ -103,7 +103,7 @@ services:
         condition: service_healthy
 
   web:
-    image: tribehealth/dify-web:05102025
+    image: tribehealth/dify-web:05122025
     restart: always
     environment:
       CONSOLE_API_URL: ${CONSOLE_API_URL:-https://dify.prometheusags.ai/api}
@@ -125,7 +125,7 @@ services:
       - "traefik.http.routers.dify-explore.service=dify-web"
 
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     restart: always
     environment:
       PGUSER: ${PGUSER:-postgres}
@@ -137,6 +137,7 @@ services:
       - traefik_network
     volumes:
       - ./volumes/db/data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ 'CMD', 'pg_isready', '-h', 'db', '-U', '${PGUSER:-postgres}', '-d', '${POSTGRES_DB:-dify}' ]
       interval: 1s
@@ -192,7 +193,7 @@ services:
       - traefik_network
 
   scheduler:
-    image: tribehealth/dify-api:05102025.2
+    image: tribehealth/dify-api:05132025
     restart: always
     command: celery -A app.celery beat --loglevel=INFO
     environment:
