@@ -958,7 +958,7 @@ class TidbAuthBinding(Base):
         db.Index("tidb_auth_bindings_tenant_idx", "tenant_id"),
         db.Index("tidb_auth_bindings_active_idx", "active"),
         db.Index("tidb_auth_bindings_created_at_idx", "created_at"),
-        db.Index("tidb_auth_bindings_status_idx", "status"),
+        db.Index("tidb_auth_bindings_status_idx", "status")
     )
     id = db.Column(StringUUID, primary_key=True, server_default=db.text("uuid_generate_v4()"))
     tenant_id = db.Column(StringUUID, nullable=True)

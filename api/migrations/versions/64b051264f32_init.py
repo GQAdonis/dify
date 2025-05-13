@@ -30,7 +30,8 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP(0)'), nullable=False),
     sa.PrimaryKeyConstraint('id', name='account_integrate_pkey'),
     sa.UniqueConstraint('account_id', 'provider', name='unique_account_provider'),
-    sa.UniqueConstraint('provider', 'open_id', name='unique_provider_open_id')
+    sa.UniqueConstraint('provider', 'open_id', name='unique_provider_open_id'),
+    schema='dify'
     )
     op.create_table('accounts',
     sa.Column('id', postgresql.UUID(), server_default=sa.text('uuid_generate_v4()'), nullable=False),
