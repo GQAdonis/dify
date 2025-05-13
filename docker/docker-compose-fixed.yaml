@@ -38,7 +38,7 @@ x-shared-env: &shared-api-worker-env
 
 services:
   api:
-    image: tribehealth/dify-api:05132025.4
+    image: tribehealth/dify-api:05132025.5
     restart: always
     environment:
       <<: *shared-api-worker-env
@@ -84,7 +84,7 @@ services:
       - "traefik.http.routers.dify-files.service=dify-api"
 
   worker:
-    image: tribehealth/dify-api:05132025.4
+    image: tribehealth/dify-api:05132025.5
     restart: always
     command: celery -A app.celery worker -P gevent -c 1 --loglevel=INFO
     networks:
@@ -125,7 +125,7 @@ services:
       - "traefik.http.routers.dify-explore.service=dify-web"
 
   db:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     restart: always
     environment:
       PGUSER: ${PGUSER:-postgres}
@@ -159,7 +159,7 @@ services:
 
   # The plugin daemon service
   plugin_daemon:
-    image: tribehealth/dify-plugin-daemon:05102025
+    image: tribehealth/dify-plugin-daemon:05132025
     restart: always
     environment:
       <<: *shared-api-worker-env
@@ -193,7 +193,7 @@ services:
       - traefik_network
 
   scheduler:
-    image: tribehealth/dify-api:05132025.4
+    image: tribehealth/dify-api:05132025.5
     restart: always
     command: celery -A app.celery beat --loglevel=INFO
     environment:
