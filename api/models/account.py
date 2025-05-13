@@ -21,7 +21,7 @@ class AccountStatus(enum.StrEnum):
 
 
 class Account(UserMixin, Base):
-    __tablename__ = "accounts"
+    __tablename__ = "dify_accounts"
     __table_args__ = (db.PrimaryKeyConstraint("id", name="account_pkey"), db.Index("account_email_idx", "email"))
 
     id: Mapped[str] = mapped_column(StringUUID, server_default=db.text("uuid_generate_v4()"))
