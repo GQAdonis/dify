@@ -32,7 +32,7 @@ def upgrade():
     sa.UniqueConstraint('account_id', 'provider', name='unique_account_provider'),
     sa.UniqueConstraint('provider', 'open_id', name='unique_provider_open_id')
     )
-    op.create_table('dify_accounts',
+    op.create_table('accounts',
     sa.Column('id', postgresql.UUID(), server_default=sa.text('uuid_generate_v4()'), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
@@ -50,7 +50,7 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP(0)'), nullable=False),
     sa.PrimaryKeyConstraint('id', name='account_pkey')
     )
-    with op.batch_alter_table('dify_accounts', schema=None) as batch_op:
+    with op.batch_alter_table('accounts', schema=None) as batch_op:
         batch_op.create_index('account_email_idx', ['email'], unique=False)
 
     op.create_table('api_requests',
@@ -787,10 +787,10 @@ def downgrade():
         batch_op.drop_index('api_request_token_idx')
 
     op.drop_table('api_requests')
-    with op.batch_alter_table('dify_accounts', schema=None) as batch_op:
+    with op.batch_alter_table('accounts', schema=None) as batch_op:
         batch_op.drop_index('account_email_idx')
 
-    op.drop_table('dify_accounts')
+    op.drop_table('accounts')
     op.drop_table('account_integrates')
 
     op.execute('DROP EXTENSION IF EXISTS "uuid-ossp";')
