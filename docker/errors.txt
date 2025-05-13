@@ -1,0 +1,350 @@
+docker compose -f docker-compose-fixed.yaml logs api
+api-1  | Running migrations
+api-1  | 2025-05-13 00:25:23,543.543 INFO [MainThread] [utils.py:162] - NumExpr defaulting to 4 threads.
+api-1  | /app/api/.venv/lib/python3.12/site-packages/opik/evaluation/metrics/heuristics/regex_match.py:21: SyntaxWarning: invalid escape sequence '\d'
+api-1  |   >>> regex_metric = RegexMatch(r"\d{3}-\d{2}-\d{4}")
+api-1  | 2025-05-13 00:25:34,909.909 INFO [MainThread] [_client.py:1038] - HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+api-1  | Traceback (most recent call last):
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  | psycopg2.errors.UndefinedFunction: function uuid_generate_v4() does not exist
+api-1  | LINE 3:  id UUID DEFAULT uuid_generate_v4() NOT NULL, 
+api-1  |                          ^
+api-1  | HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+api-1  | 
+api-1  | 
+api-1  | The above exception was the direct cause of the following exception:
+api-1  | 
+api-1  | Traceback (most recent call last):
+api-1  |   File "/app/api/.venv/bin/flask", line 10, in <module>
+api-1  |     sys.exit(main())
+api-1  |              ^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 1129, in main
+api-1  |     cli.main()
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1082, in main
+api-1  |     rv = self.invoke(ctx)
+api-1  |          ^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1691, in invoke
+api-1  |     cmd_name, cmd, args = self.resolve_command(ctx, args)
+api-1  |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1738, in resolve_command
+api-1  |     cmd = self.get_command(ctx, cmd_name)
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 631, in get_command
+api-1  |     app = info.load_app()
+api-1  |           ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 349, in load_app
+api-1  |     app = locate_app(import_name, name)
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 245, in locate_app
+api-1  |     __import__(module_name)
+api-1  |   File "/app/api/app.py", line 37, in <module>
+api-1  |     app = create_app()
+api-1  |           ^^^^^^^^^^^^
+api-1  |   File "/app/api/app_factory.py", line 32, in create_app
+api-1  |     initialize_extensions(app)
+api-1  |   File "/app/api/app_factory.py", line 96, in initialize_extensions
+api-1  |     ext.init_app(app)
+api-1  |   File "/app/api/extensions/ext_database.py", line 8, in init_app
+api-1  |     db.create_all()
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 900, in create_all
+api-1  |     self._call_for_binds(bind_key, "create_all")
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 881, in _call_for_binds
+api-1  |     getattr(metadata, op_name)(bind=engine)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5868, in create_all
+api-1  |     bind._run_ddl_visitor(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3253, in _run_ddl_visitor
+api-1  |     conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2459, in _run_ddl_visitor
+api-1  |     visitorcallable(self.dialect, self, **kwargs).traverse_single(element)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+api-1  |     return meth(obj, **kw)
+api-1  |            ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 918, in visit_metadata
+api-1  |     self.traverse_single(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+api-1  |     return meth(obj, **kw)
+api-1  |            ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 956, in visit_table
+api-1  |     )._invoke_with(self.connection)
+api-1  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 314, in _invoke_with
+api-1  |     return bind.execute(self)
+api-1  |            ^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+api-1  |     return meth(
+api-1  |            ^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 180, in _execute_on_connection
+api-1  |     return connection._execute_ddl(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1529, in _execute_ddl
+api-1  |     ret = self._execute_context(
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+api-1  |     return self._exec_single_context(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+api-1  |     self._handle_dbapi_exception(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+api-1  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  | sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedFunction) function uuid_generate_v4() does not exist
+api-1  | LINE 3:  id UUID DEFAULT uuid_generate_v4() NOT NULL, 
+api-1  |                          ^
+api-1  | HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+api-1  | 
+api-1  | [SQL: 
+api-1  | CREATE TABLE accounts (
+api-1  | 	id UUID DEFAULT uuid_generate_v4() NOT NULL, 
+api-1  | 	name VARCHAR(255) NOT NULL, 
+api-1  | 	email VARCHAR(255) NOT NULL, 
+api-1  | 	password VARCHAR(255), 
+api-1  | 	password_salt VARCHAR(255), 
+api-1  | 	avatar VARCHAR(255), 
+api-1  | 	interface_language VARCHAR(255), 
+api-1  | 	interface_theme VARCHAR(255), 
+api-1  | 	timezone VARCHAR(255), 
+api-1  | 	last_login_at TIMESTAMP WITHOUT TIME ZONE, 
+api-1  | 	last_login_ip VARCHAR(255), 
+api-1  | 	last_active_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+api-1  | 	status VARCHAR(16) DEFAULT 'active'::character varying NOT NULL, 
+api-1  | 	initialized_at TIMESTAMP WITHOUT TIME ZONE, 
+api-1  | 	created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+api-1  | 	updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+api-1  | 	CONSTRAINT account_pkey PRIMARY KEY (id)
+api-1  | )
+api-1  | 
+api-1  | ]
+api-1  | (Background on this error at: https://sqlalche.me/e/20/f405)
+
+docker compose -f docker-compose-fixed.yaml logs api
+api-1  | Running migrations
+api-1  | 2025-05-13 00:33:29,181.181 INFO [MainThread] [utils.py:162] - NumExpr defaulting to 4 threads.
+api-1  | /app/api/.venv/lib/python3.12/site-packages/opik/evaluation/metrics/heuristics/regex_match.py:21: SyntaxWarning: invalid escape sequence '\d'
+api-1  |   >>> regex_metric = RegexMatch(r"\d{3}-\d{2}-\d{4}")
+api-1  | 2025-05-13 00:33:39,296.296 INFO [MainThread] [_client.py:1038] - HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+api-1  | Traceback (most recent call last):
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  | psycopg2.errors.FeatureNotSupported: cannot use column reference in DEFAULT expression
+api-1  | LINE 8:  status VARCHAR(255) DEFAULT CREATING NOT NULL, 
+api-1  |                                      ^
+api-1  | 
+api-1  | 
+api-1  | The above exception was the direct cause of the following exception:
+api-1  | 
+api-1  | Traceback (most recent call last):
+api-1  |   File "/app/api/.venv/bin/flask", line 10, in <module>
+api-1  |     sys.exit(main())
+api-1  |              ^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 1129, in main
+api-1  |     cli.main()
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1082, in main
+api-1  |     rv = self.invoke(ctx)
+api-1  |          ^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1691, in invoke
+api-1  |     cmd_name, cmd, args = self.resolve_command(ctx, args)
+api-1  |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1738, in resolve_command
+api-1  |     cmd = self.get_command(ctx, cmd_name)
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 631, in get_command
+api-1  |     app = info.load_app()
+api-1  |           ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 349, in load_app
+api-1  |     app = locate_app(import_name, name)
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 245, in locate_app
+api-1  |     __import__(module_name)
+api-1  |   File "/app/api/app.py", line 37, in <module>
+api-1  |     app = create_app()
+api-1  |           ^^^^^^^^^^^^
+api-1  |   File "/app/api/app_factory.py", line 32, in create_app
+api-1  |     initialize_extensions(app)
+api-1  |   File "/app/api/app_factory.py", line 96, in initialize_extensions
+api-1  |     ext.init_app(app)
+api-1  |   File "/app/api/extensions/ext_database.py", line 8, in init_app
+api-1  |     db.create_all()
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 900, in create_all
+api-1  |     self._call_for_binds(bind_key, "create_all")
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 881, in _call_for_binds
+api-1  |     getattr(metadata, op_name)(bind=engine)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5868, in create_all
+api-1  |     bind._run_ddl_visitor(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3253, in _run_ddl_visitor
+api-1  |     conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2459, in _run_ddl_visitor
+api-1  |     visitorcallable(self.dialect, self, **kwargs).traverse_single(element)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+api-1  |     return meth(obj, **kw)
+api-1  |            ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 918, in visit_metadata
+api-1  |     self.traverse_single(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+api-1  |     return meth(obj, **kw)
+api-1  |            ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 956, in visit_table
+api-1  |     )._invoke_with(self.connection)
+api-1  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 314, in _invoke_with
+api-1  |     return bind.execute(self)
+api-1  |            ^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+api-1  |     return meth(
+api-1  |            ^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 180, in _execute_on_connection
+api-1  |     return connection._execute_ddl(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1529, in _execute_ddl
+api-1  |     ret = self._execute_context(
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+api-1  |     return self._exec_single_context(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+api-1  |     self._handle_dbapi_exception(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+api-1  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  | sqlalchemy.exc.NotSupportedError: (psycopg2.errors.FeatureNotSupported) cannot use column reference in DEFAULT expression
+api-1  | LINE 8:  status VARCHAR(255) DEFAULT CREATING NOT NULL, 
+api-1  |                                      ^
+api-1  | 
+api-1  | [SQL: 
+api-1  | CREATE TABLE tidb_auth_bindings (
+api-1  | 	id UUID DEFAULT uuid_generate_v4() NOT NULL, 
+api-1  | 	tenant_id UUID, 
+api-1  | 	cluster_id VARCHAR(255) NOT NULL, 
+api-1  | 	cluster_name VARCHAR(255) NOT NULL, 
+api-1  | 	active BOOLEAN DEFAULT false NOT NULL, 
+api-1  | 	status VARCHAR(255) DEFAULT CREATING NOT NULL, 
+api-1  | 	account VARCHAR(255) NOT NULL, 
+api-1  | 	password VARCHAR(255) NOT NULL, 
+api-1  | 	created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+api-1  | 	CONSTRAINT tidb_auth_bindings_pkey PRIMARY KEY (id)
+api-1  | )
+api-1  | 
+api-1  | ]
+api-1  | (Background on this error at: https://sqlalche.me/e/20/tw8g)
+api-1  | Running migrations
+api-1  | 2025-05-13 00:33:55,226.226 INFO [MainThread] [utils.py:162] - NumExpr defaulting to 4 threads.
+api-1  | 2025-05-13 00:33:58,096.096 INFO [MainThread] [_client.py:1038] - HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+api-1  | Traceback (most recent call last):
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  | psycopg2.errors.FeatureNotSupported: cannot use column reference in DEFAULT expression
+api-1  | LINE 8:  status VARCHAR(255) DEFAULT CREATING NOT NULL, 
+api-1  |                                      ^
+api-1  | 
+api-1  | 
+api-1  | The above exception was the direct cause of the following exception:
+api-1  | 
+api-1  | Traceback (most recent call last):
+api-1  |   File "/app/api/.venv/bin/flask", line 10, in <module>
+api-1  |     sys.exit(main())
+api-1  |              ^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 1129, in main
+api-1  |     cli.main()
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1082, in main
+api-1  |     rv = self.invoke(ctx)
+api-1  |          ^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1691, in invoke
+api-1  |     cmd_name, cmd, args = self.resolve_command(ctx, args)
+api-1  |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/click/core.py", line 1738, in resolve_command
+api-1  |     cmd = self.get_command(ctx, cmd_name)
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 631, in get_command
+api-1  |     app = info.load_app()
+api-1  |           ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 349, in load_app
+api-1  |     app = locate_app(import_name, name)
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask/cli.py", line 245, in locate_app
+api-1  |     __import__(module_name)
+api-1  |   File "/app/api/app.py", line 37, in <module>
+api-1  |     app = create_app()
+api-1  |           ^^^^^^^^^^^^
+api-1  |   File "/app/api/app_factory.py", line 32, in create_app
+api-1  |     initialize_extensions(app)
+api-1  |   File "/app/api/app_factory.py", line 96, in initialize_extensions
+api-1  |     ext.init_app(app)
+api-1  |   File "/app/api/extensions/ext_database.py", line 8, in init_app
+api-1  |     db.create_all()
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 900, in create_all
+api-1  |     self._call_for_binds(bind_key, "create_all")
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py", line 881, in _call_for_binds
+api-1  |     getattr(metadata, op_name)(bind=engine)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5868, in create_all
+api-1  |     bind._run_ddl_visitor(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3253, in _run_ddl_visitor
+api-1  |     conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2459, in _run_ddl_visitor
+api-1  |     visitorcallable(self.dialect, self, **kwargs).traverse_single(element)
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+api-1  |     return meth(obj, **kw)
+api-1  |            ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 918, in visit_metadata
+api-1  |     self.traverse_single(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+api-1  |     return meth(obj, **kw)
+api-1  |            ^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 956, in visit_table
+api-1  |     )._invoke_with(self.connection)
+api-1  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 314, in _invoke_with
+api-1  |     return bind.execute(self)
+api-1  |            ^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+api-1  |     return meth(
+api-1  |            ^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 180, in _execute_on_connection
+api-1  |     return connection._execute_ddl(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1529, in _execute_ddl
+api-1  |     ret = self._execute_context(
+api-1  |           ^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+api-1  |     return self._exec_single_context(
+api-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+api-1  |     self._handle_dbapi_exception(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+api-1  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+api-1  |     self.dialect.do_execute(
+api-1  |   File "/app/api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+api-1  |     cursor.execute(statement, parameters)
+api-1  | sqlalchemy.exc.NotSupportedError: (psycopg2.errors.FeatureNotSupported) cannot use column reference in DEFAULT expression
+api-1  | LINE 8:  status VARCHAR(255) DEFAULT CREATING NOT NULL, 
+api-1  |                                      ^
+api-1  | 
+api-1  | [SQL: 
+api-1  | CREATE TABLE tidb_auth_bindings (
+api-1  | 	id UUID DEFAULT uuid_generate_v4() NOT NULL, 
+api-1  | 	tenant_id UUID, 
+api-1  | 	cluster_id VARCHAR(255) NOT NULL, 
+api-1  | 	cluster_name VARCHAR(255) NOT NULL, 
+api-1  | 	active BOOLEAN DEFAULT false NOT NULL, 
+api-1  | 	status VARCHAR(255) DEFAULT CREATING NOT NULL, 
+api-1  | 	account VARCHAR(255) NOT NULL, 
+api-1  | 	password VARCHAR(255) NOT NULL, 
+api-1  | 	created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+api-1  | 	CONSTRAINT tidb_auth_bindings_pkey PRIMARY KEY (id)
+api-1  | )
+api-1  | 
+api-1  | ]
+api-1  | (Background on this error at: https://sqlalche.me/e/20/tw8g)
+api-1  | Running migrations
