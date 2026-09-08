@@ -52,6 +52,7 @@ from repositories.installation_state_repository import InstallationStateReposito
 from repositories.message_file_preview_repository import MessageFilePreviewQueryRepository
 from repositories.oauth_access_token_repository import SQLAlchemyOAuthAccessTokenRepository
 from repositories.oauth_server_repository import RedisOAuthServerTokenRepository, SQLAlchemyOAuthServerRepository
+from repositories.plugin_file_upload_repository import SQLAlchemyPluginFileUploadOwnerRepository
 from repositories.recommended_app_catalog_repository import DatabaseRecommendedAppCatalogRepository
 from repositories.sqlalchemy_api_workflow_run_repository import DifyAPISQLAlchemyWorkflowRunRepository
 from repositories.step_by_step_tour_repository import SQLAlchemyStepByStepTourStateRepository
@@ -167,6 +168,8 @@ from services.notification_service import NotificationService
 from services.notion_data_source_gateway import NotionDataSourceGateway
 from services.oauth_server_service import OAUTH_ACCESS_TOKEN_EXPIRES_IN, OAuthServerService
 from services.partner_tenant_binding_service import PartnerTenantBindingService
+from services.plugin_file_upload_gateway import ToolFilePluginUploadGateway
+from services.plugin_file_upload_service import PluginFileUploadService
 from services.recommended_app_catalog_gateway import (
     BuiltinRecommendedAppCatalogGateway,
     RecommendedAppCatalogRouter,
@@ -269,6 +272,7 @@ class ApplicationServices:
     files: FileService
     human_input_file_uploads: HumanInputFileUploadService
     message_file_previews: MessageFilePreviewService
+    plugin_file_uploads: PluginFileUploadService
     tool_file_downloads: ToolFileDownloadService
     upload_file_delivery: UploadFileDeliveryService
     oauth_server: OAuthServerService
@@ -673,6 +677,10 @@ def build_application_services(
         message_file_previews=MessageFilePreviewService(
             files=MessageFilePreviewQueryRepository(session_factory=database_client),
             storage=storage,
+        ),
+        plugin_file_uploads=PluginFileUploadService(
+            owners=SQLAlchemyPluginFileUploadOwnerRepository(session_factory=database_client),
+            files=ToolFilePluginUploadGateway(tool_files=ToolFileManager()),
         ),
         tool_file_downloads=ToolFileDownloadService(tool_files=ToolFileManager()),
         upload_file_delivery=UploadFileDeliveryService(
