@@ -15,16 +15,9 @@ export type ProviderContextState = {
   refreshModelProviders: () => Promise<void>
   textGenerationModelList: Model[]
   isAPIKeySet: boolean
-  enableSkill: boolean
-  enableReplaceWebAppLogo: boolean
-  modelLoadBalancingEnabled: boolean
-  enableEducationPlan: boolean
-  isAllowTransferWorkspace: boolean
-  isAllowPublishAsCustomKnowledgePipelineTemplate: boolean
-  humanInputEmailDeliveryEnabled: boolean
 }
 
-export const baseProviderContextValue: ProviderContextState = {
+const baseProviderContextValue: ProviderContextState = {
   modelProviders: [],
   modelProviderPlugins: {},
   isLoadingModelProviders: false,
@@ -32,13 +25,6 @@ export const baseProviderContextValue: ProviderContextState = {
   refreshModelProviders: async () => {},
   textGenerationModelList: [],
   isAPIKeySet: true,
-  enableSkill: false,
-  enableReplaceWebAppLogo: false,
-  modelLoadBalancingEnabled: false,
-  enableEducationPlan: false,
-  isAllowTransferWorkspace: false,
-  isAllowPublishAsCustomKnowledgePipelineTemplate: false,
-  humanInputEmailDeliveryEnabled: false,
 }
 
 export const ProviderContext = createContext<ProviderContextState>(baseProviderContextValue)
