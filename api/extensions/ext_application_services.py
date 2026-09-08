@@ -58,6 +58,7 @@ from repositories.step_by_step_tour_repository import SQLAlchemyStepByStepTourSt
 from repositories.tag_repository import TagRepository
 from repositories.trial_app_query_repository import TrialAppQueryRepository
 from repositories.trial_app_usage_repository import TrialAppUsageRepository
+from repositories.upload_file_delivery_repository import UploadFileDeliveryQueryRepository
 from repositories.web_passport_repository import WebPassportRepository
 from repositories.webapp_access_query_repository import WebAppAccessQueryRepository
 from repositories.workflow_app_log_query_repository import WorkflowAppLogQueryRepository
@@ -186,6 +187,7 @@ from services.step_by_step_tour_service import StepByStepTourService
 from services.system_feature_service import SystemFeatureService
 from services.tag_application_service import TagApplicationService
 from services.trial_app_usage import TrialAppUsageRecorder
+from services.upload_file_delivery_service import UploadFileDeliveryService
 from services.web_app_runtime_query_service import WebAppRuntimeQueryService
 from services.web_passport_gateways import (
     DeploymentWebPassportAuthGateway,
@@ -266,6 +268,7 @@ class ApplicationServices:
     files: FileService
     human_input_file_uploads: HumanInputFileUploadService
     message_file_previews: MessageFilePreviewService
+    upload_file_delivery: UploadFileDeliveryService
     oauth_server: OAuthServerService
     init_validation: InitValidationService
     notifications: NotificationService
@@ -667,6 +670,10 @@ def build_application_services(
         ),
         message_file_previews=MessageFilePreviewService(
             files=MessageFilePreviewQueryRepository(session_factory=database_client),
+            storage=storage,
+        ),
+        upload_file_delivery=UploadFileDeliveryService(
+            files=UploadFileDeliveryQueryRepository(session_factory=database_client),
             storage=storage,
         ),
         oauth_server=_build_oauth_server_service(database_client=database_client, redis=redis),
